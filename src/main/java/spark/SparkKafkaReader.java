@@ -59,7 +59,7 @@ public class SparkKafkaReader {
 
                 try {
                     int number = SparkCassandraWriter.sendFromJson(dataList);
-                    System.out.println(number + "lines was inserted");
+                    System.out.println(number + "lines were inserted");
                 } catch (Exception ex) {
                     System.err.println("-------error happened while sending data to cassandra: " + ex);
                 }
