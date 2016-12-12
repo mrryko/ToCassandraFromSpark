@@ -55,7 +55,7 @@ public class SparkKafkaReader {
                 for (Tuple2<String, String> entry : rdd.collect()) {
                     dataList.add(entry._2());
                 }
-                System.out.println("====10 lines will be send to cassandra = " + dataList.size());
+                System.out.println("====10 lines will be sent to cassandra = " + dataList.size());
 
                 try {
                     int number = SparkCassandraWriter.sendFromJson(dataList);
