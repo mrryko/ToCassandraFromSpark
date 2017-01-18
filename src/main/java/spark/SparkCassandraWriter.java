@@ -21,51 +21,38 @@ public class SparkCassandraWriter {
         keySpace = keySpace2;
     }
 
-    public static int sendFromJson(List<String> KafkaStream) {
+    public static int sendFromJson(List<String> KafkaStream)
+            throws NoHostAvailableException, QueryValidationException, JSONException {
         List<String> directKafkaStream = KafkaStream;
-         System.out.println("list created. size: " + directKafkaStream.size());
+        System.out.println("list created. size: " + directKafkaStream.size());
         int counter = 0; //for number of executed queries
 
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+
+        Session session = cluster.connect();
         try {
-            Session session = cluster.connect();
-            try {
-                session.execute("USE " + keySpace);
-                List<String> list = directKafkaStream;
-               
-                Iterator itr = list.iterator();
+            session.execute("USE " + keySpace);
+            List<String> list = directKafkaStream;
 
-                while (itr.hasNext()) {
-                    String message = itr.next().toString();
-                    
-                    try {
-                        JSONObject object = new JSONObject(message);
-                        String country = object.getString("countryCode");
-                        int word = object.getInt("numberOfWords");
-                        try {
-                            PreparedStatement prepared = session.prepare("INSERT INTO " + table
-                                    + " (countryCode, numberOfWords)"
-                                    + "VALUES (?,?)");
-                            BoundStatement bound = prepared.bind(country, word);
-                            session.execute(bound);
-                            counter++;
-                        } catch (QueryValidationException ex) {
-                            System.out.println("-------cql query isn't valid. error: " + ex);
-                        }
+            Iterator itr = list.iterator();
 
-                    } catch (JSONException ex) {
-                        System.out.println("-------Error in json parse: " + ex);
-                    }
-                }
-                session.close();
-                return counter;
+            while (itr.hasNext()) {
+                String message = itr.next().toString();
+                JSONObject object = new JSONObject(message);
+                String country = object.getString("countryCode");
+                int word = object.getInt("numberOfWords");
 
-            } catch (QueryValidationException ex) {
-                System.out.println("-------wrong keyspace name. error: " + ex);
+                PreparedStatement prepared = session.prepare("INSERT INTO " + table
+                        + " (countryCode, numberOfWords)"
+                        + "VALUES (?,?)");
+                BoundStatement bound = prepared.bind(country, word);
+                session.execute(bound);
+                counter++;
             }
-        } catch (NoHostAvailableException ex) {
-            System.out.println("-------connection error: " + ex);
+            return counter;
+        } finally {
+            session.close();
         }
-        return counter; //if an error happens, the method returns 0
+
     }
 }
