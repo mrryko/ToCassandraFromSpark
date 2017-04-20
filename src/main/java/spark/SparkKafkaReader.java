@@ -58,6 +58,7 @@ public class SparkKafkaReader {
             }
 
         });
+                
         javaStreamContext.start();
         javaStreamContext.awaitTermination();
     }
