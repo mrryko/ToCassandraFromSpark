@@ -33,7 +33,6 @@ public class SparkCassandraWriter {
         try {
             session.execute("USE " + keySpace);
             List<String> list = directKafkaStream;
-
             Iterator itr = list.iterator();
 
             while (itr.hasNext()) {
@@ -49,7 +48,9 @@ public class SparkCassandraWriter {
                 session.execute(bound);
                 counter++;
             }
+            
             return counter;
+            
         } finally {
             session.close();
         }
