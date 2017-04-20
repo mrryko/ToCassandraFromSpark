@@ -12,11 +12,11 @@ public class Main {
     public static void main(String[] args) {        
         Set<String> topics = Collections.singleton("sspark");
         
-        final String appName = "kafka-consumer";
-        final String master = "local[*]";
-        final String zookeper = "localhost:9092";
-        final String cassandraTable = "testSpark";
-        final String cassandraKeySpace = "demoCassandra";
+        String appName = "kafka-consumer";
+        String master = "local[*]";
+        String zookeper = "localhost:9092";
+        String cassandraTable = "testSpark";
+        String cassandraKeySpace = "demoCassandra";
 
         /*configure cassandra's table and keyspace which we had to create before*/
         SparkCassandraWriter.configure(cassandraTable, cassandraKeySpace);
